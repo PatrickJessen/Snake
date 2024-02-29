@@ -53,13 +53,20 @@ void Game::Update()
 	}
 }
 
-void Game::Movement()
+double Game::Movement(Direction action)
 {
-	while (true)
-	{
-		MoveSnake();
-		SetDirection();
+	dir = action;
+	MoveSnake();
+	if (EatApple()) {
+		return 1.0;
 	}
+	else if (HasBodyCollided()) {
+		return -1.0;
+	}
+	else if (IsOutOfBounds()) {
+		return -1.0;
+	}
+	return 0.0;
 }
 
 void Game::MoveSnake()
@@ -97,14 +104,16 @@ void Game::SetDirection()
 		dir = Direction::RIGHT;
 }
 
-void Game::EatApple()
+bool Game::EatApple()
 {
 	if (map->GetSnake()[0]->X == map->GetApple().X && map->GetSnake()[0]->Y == map->GetApple().Y)
 	{
 		map->AddSnake();
 		RespawnApple();
 		map->AddScore();
+		return true;
 	}
+	return false;
 }
 
 void Game::RespawnApple()
@@ -126,6 +135,13 @@ bool Game::IsOutOfBounds()
 	if (map->GetSnake()[0]->X <= 0 || map->GetSnake()[0]->X >= width || map->GetSnake()[0]->Y <= 0 || map->GetSnake()[0]->Y >= height)
 		return true;
 	return false;
+}
+
+void Game::Reset()
+{
+	map->ResetScore();
+	map->Init();
+	dir = Direction::DOWN;
 }
 
 bool Game::IsGameOver()

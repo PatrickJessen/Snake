@@ -15,15 +15,16 @@ public:
 
 public:
 	void Update();
-	void Movement();
+	double Movement(Direction action);
+	bool HasBodyCollided();
+	bool IsOutOfBounds();
+	void Reset();
 
 private:
 	void MoveSnake();
 	void SetDirection();
-	void EatApple();
+	bool EatApple();
 	void RespawnApple();
-	bool HasBodyCollided();
-	bool IsOutOfBounds();
 	bool IsGameOver();
 
 

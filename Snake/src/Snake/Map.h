@@ -24,7 +24,7 @@ enum class MapType
 	APPLE = 2
 };
 static const int width = 40;
-static const int height = 30;
+static const int height = 40;
 
 class Map
 {
