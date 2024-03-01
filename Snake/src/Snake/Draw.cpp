@@ -6,6 +6,7 @@ Draw::Draw(Window* window)
 	this->window = window;
 	map = new Map();
 	InitText();
+	highScore = 0;
 }
 
 Draw::~Draw()
@@ -92,7 +93,7 @@ void Draw::PrintScore()
 
 void Draw::PrintHightScore()
 {
-	std::string highScoreText = "Highscore: " + GetHighScore();
+	std::string highScoreText = "Highscore: " + std::to_string(highScore);
 	TTF_Font* ttfFont = TTF_OpenFont("Assets/comic.ttf", 20);
 	SDL_Color color = { 0, 0, 255, 255 };
 	SDL_Surface* surface = TTF_RenderText_Solid(ttfFont, highScoreText.c_str(), color);
@@ -121,4 +122,14 @@ std::string Draw::GetHighScore()
 	}
 	std::string result = std::to_string(highScore).c_str();
 	return result;
+}
+
+void Draw::SetHighScore(int score)
+{
+	highScore = score;
+}
+
+int Draw::GetHighestScore()
+{
+	return highScore;
 }

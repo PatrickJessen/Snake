@@ -8,7 +8,7 @@ public:
     QLearningAgent(int size, double learningRate, double discountFactor, double epsilon) :
         size(size), learningRate(learningRate), discountFactor(discountFactor), epsilon(epsilon) {
         // Initialize Q-table with zeros
-        qTable.resize(size * size * size, std::vector<double>(size, 0.0));
+        qTable.resize(size * size * size, std::vector<double>(4, 0.0));
         // Seed the random number generator
         rng.seed(std::random_device()());
     }
@@ -23,7 +23,7 @@ public:
         else {
             // Greedy action with probability 1 - epsilon
             double maxQValue = qTable[state][0];
-            T maxAction = static_cast<T>(1);
+            T maxAction = static_cast<T>(0);
             for (int i = 1; i < 4; ++i) {
                 if (qTable[state][i] > maxQValue) {
                     maxQValue = qTable[state][i];

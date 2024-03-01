@@ -119,12 +119,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\patri\source\repos\Snake\Snake\lib\SDL2_ttf-2.0.15\include;C:\Users\patri\source\repos\Snake\Snake\lib\SDL2_image-2.0.5\include;C:\Users\patri\source\repos\Snake\Snake\lib\SDL2-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\pjj\source\repos\Snake\Snake\lib\SDL2-2.0.12\include;C:\Users\pjj\source\repos\Snake\Snake\lib\SDL2_ttf-2.0.15\include;C:\Users\pjj\source\repos\Snake\Snake\lib\SDL2_image-2.0.5\include;C:\Users\patri\source\repos\Snake\Snake\lib\SDL2_ttf-2.0.15\include;C:\Users\patri\source\repos\Snake\Snake\lib\SDL2_image-2.0.5\include;C:\Users\patri\source\repos\Snake\Snake\lib\SDL2-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\patri\source\repos\Snake\Snake\lib\SDL2_ttf-2.0.15\lib\x64;C:\Users\patri\source\repos\Snake\Snake\lib\SDL2_image-2.0.5\lib\x64;C:\Users\patri\source\repos\Snake\Snake\lib\SDL2-2.0.12\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\pjj\source\repos\Snake\Snake\lib\SDL2-2.0.12\lib\x64;C:\Users\pjj\source\repos\Snake\Snake\lib\SDL2_ttf-2.0.15\lib\x64;C:\Users\pjj\source\repos\Snake\Snake\lib\SDL2_image-2.0.5\lib\x64;C:\Users\patri\source\repos\Snake\Snake\lib\SDL2_ttf-2.0.15\lib\x64;C:\Users\patri\source\repos\Snake\Snake\lib\SDL2_image-2.0.5\lib\x64;C:\Users\patri\source\repos\Snake\Snake\lib\SDL2-2.0.12\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2main.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

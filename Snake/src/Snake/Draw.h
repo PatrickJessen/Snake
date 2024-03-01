@@ -13,6 +13,8 @@ public:
 public:
 	void Update();
 	Map* GetMap() { return map; }
+	void SetHighScore(int score);
+	int GetHighestScore();
 
 private:
 	void DrawMap();
@@ -32,7 +34,7 @@ private:
 	SDL_Texture* tex;
 	SDL_Surface* tempSurface;
 	const char* fontPath;
-
+	int highScore;
 	std::string scoreText;
 };
 

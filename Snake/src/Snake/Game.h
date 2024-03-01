@@ -19,14 +19,15 @@ public:
 	bool HasBodyCollided();
 	bool IsOutOfBounds();
 	void Reset();
+	Direction GetDirection() { return dir; }
+	void MoveSnake();
 
 private:
-	void MoveSnake();
 	void SetDirection();
 	bool EatApple();
 	void RespawnApple();
 	bool IsGameOver();
-
+	double Reward();
 
 private:
 	Direction dir;

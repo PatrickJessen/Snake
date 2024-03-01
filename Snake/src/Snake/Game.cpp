@@ -56,17 +56,17 @@ void Game::Update()
 double Game::Movement(Direction action)
 {
 	dir = action;
-	MoveSnake();
-	if (EatApple()) {
+	/*if (EatApple()) {
 		return 1.0;
 	}
 	else if (HasBodyCollided()) {
-		return -1.0;
+		return 0.0;
 	}
 	else if (IsOutOfBounds()) {
 		return -1.0;
 	}
-	return 0.0;
+	return 0.1;*/
+	return Reward();
 }
 
 void Game::MoveSnake()
@@ -132,7 +132,7 @@ bool Game::HasBodyCollided()
 
 bool Game::IsOutOfBounds()
 {
-	if (map->GetSnake()[0]->X <= 0 || map->GetSnake()[0]->X >= width || map->GetSnake()[0]->Y <= 0 || map->GetSnake()[0]->Y >= height)
+	if (map->GetSnake()[0]->X < 0 || map->GetSnake()[0]->X >= width || map->GetSnake()[0]->Y < 0 || map->GetSnake()[0]->Y >= height)
 		return true;
 	return false;
 }
@@ -149,4 +149,52 @@ bool Game::IsGameOver()
 	if (HasBodyCollided() || IsOutOfBounds())
 		return true;
 	return false;
+}
+
+double Game::Reward()
+{
+	if (EatApple()) {
+		return 1.0;
+	}
+	else if (HasBodyCollided()) {
+		return 0.0;
+	}
+	else if (IsOutOfBounds()) {
+		return 0.0;
+	}
+	Snake* snake = map->GetSnake()[0];
+	Apple apple = map->GetApple();
+	double reward = 0.1;
+	if (snake->X + 1 == apple.X || snake->Y + 1 == apple.X || snake->X - 1 == apple.X || snake->Y - 1 == apple.Y) {
+		return 0.5;
+	}
+	/*for (int i = 0; i < 3; i++) {
+		if (map->field[snake[0]->X - i][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y] ||
+			map->field[snake[0]->X][snake[0]->Y - i] == map->field[map->GetApple().X][map->GetApple().Y] ||
+			map->field[snake[0]->X][snake[0]->Y - i] == map->field[map->GetApple().X][map->GetApple().Y] ||
+			map->field[snake[0]->X - i][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y] ||
+			map->field[snake[0]->X + i][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y] ||
+			map->field[snake[0]->X][snake[0]->Y + i] == map->field[map->GetApple().X][map->GetApple().Y] ||
+			map->field[snake[0]->X][snake[0]->Y + 1] == map->field[map->GetApple().X][map->GetApple().Y] ||
+			map->field[snake[0]->X + 1][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y]) {
+			reward += 0.1;
+		}
+	}*/
+	/*if (map->field[snake[0]->X - 1][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y] ||
+		map->field[snake[0]->X][snake[0]->Y - 1] == map->field[map->GetApple().X][map->GetApple().Y]) {
+		return 0.5;
+	}
+	if (map->field[snake[0]->X][snake[0]->Y -1] == map->field[map->GetApple().X][map->GetApple().Y] ||
+		map->field[snake[0]->X -1][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y]) {
+		return 0.5;
+	}
+	if (map->field[snake[0]->X +1][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y] ||
+		map->field[snake[0]->X][snake[0]->Y +1] == map->field[map->GetApple().X][map->GetApple().Y]) {
+		return 0.5;
+	}
+	if (map->field[snake[0]->X][snake[0]->Y + 1] == map->field[map->GetApple().X][map->GetApple().Y] ||
+		map->field[snake[0]->X + 1][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y]) {
+		return 0.5;
+	}*/
+	return reward;
 }
