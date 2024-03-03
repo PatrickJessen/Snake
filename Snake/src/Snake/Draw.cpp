@@ -34,13 +34,13 @@ void Draw::DrawMap()
 				SDL_SetRenderDrawColor(window->GetRender(), 0, 255, 0, 255);
 				DrawSnake();
 			}
-			if (map->field[i][y] == (int)MapType::APPLE)
+			else if (map->field[i][y] == (int)MapType::APPLE)
 			{
 				SDL_SetRenderDrawColor(window->GetRender(), 255, 0, 0, 255);
 				rect = { map->GetApple().X * map->GetSize(), map->GetApple().Y * map->GetSize(), map->GetSize(), map->GetSize() };
 				SDL_RenderFillRect(window->GetRender(), &rect);
 			}
-			if (map->field[i][y] == (int)MapType::NONE)
+			else if (map->field[i][y] == (int)MapType::NONE)
 			{
 			}
 

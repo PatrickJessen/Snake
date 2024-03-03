@@ -161,6 +161,7 @@
     <ClInclude Include="src\Snake\Map.h" />
     <ClInclude Include="src\Snake\Field.h" />
     <ClInclude Include="src\Snake\Input.h" />
+    <ClInclude Include="src\Snake\NeuralNetwork.h" />
     <ClInclude Include="src\Snake\QLearningAgent.h" />
     <ClInclude Include="src\Snake\Window.h" />
   </ItemGroup>

@@ -64,7 +64,7 @@ void Map::CreateSnake()
 		delete snake[i];
 
 	snake.clear();
-	snake.push_back(new Snake(1, 0));
+	snake.push_back(new Snake(1, 1));
 	field[snake[0]->X][snake[0]->Y] = (int)MapType::SNAKE;
 }
 

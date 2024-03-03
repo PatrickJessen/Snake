@@ -53,24 +53,50 @@ void Game::Update()
 	}
 }
 
-double Game::Movement(Direction action)
+double Game::Movement(Direction action, State state)
 {
-	dir = action;
-	/*if (EatApple()) {
-		return 1.0;
+	if (action == Direction::UP && dir != Direction::DOWN ||
+		action == Direction::DOWN && dir != Direction::UP ||
+		action == Direction::LEFT && dir != Direction::RIGHT ||
+		action == Direction::RIGHT && dir != Direction::LEFT)
+	{
+		dir = action;
+	}
+	MoveSnake();
+	// Define reward parameters
+	double maxReward = 10.0; // Maximum reward for reaching food
+	double minReward = -10.0; // Minimum reward for being close to walls
+	double foodRewardScale = 1.0; // Scale factor for food reward
+	double wallRewardScale = -0.1; // Scale factor for wall reward
+	double bodyPenaltyScale = -1.0; // Scale factor for body penalty
+	if (IsOutOfBounds()) {
+		return -10.0;
+	}
+	else if (EatApple()) {
+		return 10.0;
 	}
 	else if (HasBodyCollided()) {
-		return 0.0;
+		return -10.0;
 	}
-	else if (IsOutOfBounds()) {
-		return -1.0;
-	}
-	return 0.1;*/
-	return Reward();
+
+	// Calculate rewards based on distances
+	//double foodReward = maxReward / (state.distanceToApple + 1); // Higher reward for closer distance to food
+	return 0.0;
+	//double wallReward = wallRewardScale * (1 / (state.distanceToWallUp + 1) + 1 / (state.distanceToWallDown + 1) +
+	//	1 / (state.distanceToWallLeft + 1) + 1 / (state.distanceToWallRight + 1));
+	//double bodyPenalty = bodyPenaltyScale * (1 / (state.distanceToBody + 1)); // Penalty for being close to body
+
+	//// Ensure that the wall reward does not exceed the minimum reward
+	//wallReward = std::min(wallReward, minReward);
+
+	//// Total reward is a combination of food reward, wall reward, and body penalty
+	//double totalReward = foodRewardScale * foodReward + wallRewardScale * wallReward + bodyPenaltyScale * bodyPenalty;
+
+	//return totalReward;
 }
 
 void Game::MoveSnake()
-{
+{ 
 	for (int i = map->GetSnake().size() - 1; i >= 0; i--)
 	{
 		if (i == 0)
@@ -90,6 +116,16 @@ void Game::MoveSnake()
 			map->GetSnake()[i]->Y = map->GetSnake()[i - 1]->Y;
 		}
 	}
+}
+
+State Game::GetCurrentState()
+{
+	State state;
+	state.headX = map->GetSnake()[0]->X;
+	state.headY = map->GetSnake()[0]->Y;
+	state.direction = dir;
+	calculateDistances(state, width, height);
+	return state;
 }
 
 void Game::SetDirection()
@@ -168,33 +204,73 @@ double Game::Reward()
 	if (snake->X + 1 == apple.X || snake->Y + 1 == apple.X || snake->X - 1 == apple.X || snake->Y - 1 == apple.Y) {
 		return 0.5;
 	}
-	/*for (int i = 0; i < 3; i++) {
-		if (map->field[snake[0]->X - i][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y] ||
-			map->field[snake[0]->X][snake[0]->Y - i] == map->field[map->GetApple().X][map->GetApple().Y] ||
-			map->field[snake[0]->X][snake[0]->Y - i] == map->field[map->GetApple().X][map->GetApple().Y] ||
-			map->field[snake[0]->X - i][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y] ||
-			map->field[snake[0]->X + i][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y] ||
-			map->field[snake[0]->X][snake[0]->Y + i] == map->field[map->GetApple().X][map->GetApple().Y] ||
-			map->field[snake[0]->X][snake[0]->Y + 1] == map->field[map->GetApple().X][map->GetApple().Y] ||
-			map->field[snake[0]->X + 1][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y]) {
-			reward += 0.1;
-		}
-	}*/
-	/*if (map->field[snake[0]->X - 1][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y] ||
-		map->field[snake[0]->X][snake[0]->Y - 1] == map->field[map->GetApple().X][map->GetApple().Y]) {
-		return 0.5;
-	}
-	if (map->field[snake[0]->X][snake[0]->Y -1] == map->field[map->GetApple().X][map->GetApple().Y] ||
-		map->field[snake[0]->X -1][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y]) {
-		return 0.5;
-	}
-	if (map->field[snake[0]->X +1][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y] ||
-		map->field[snake[0]->X][snake[0]->Y +1] == map->field[map->GetApple().X][map->GetApple().Y]) {
-		return 0.5;
-	}
-	if (map->field[snake[0]->X][snake[0]->Y + 1] == map->field[map->GetApple().X][map->GetApple().Y] ||
-		map->field[snake[0]->X + 1][snake[0]->Y] == map->field[map->GetApple().X][map->GetApple().Y]) {
-		return 0.5;
-	}*/
 	return reward;
+}
+
+void Game::DistanceToWall(State& state)
+{
+	// Up
+	state.distanceToWallUp = state.headY;
+
+	// Down
+	state.distanceToWallDown = height - 1 - state.headY;
+
+	// Left
+	state.distanceToWallLeft = state.headX;
+
+	// Right
+	state.distanceToWallRight = width - 1 - state.headX;
+}
+
+void Game::DistanceToApple(State& state)
+{
+	int dx = abs(state.headX - map->GetApple().X);
+	int dy = abs(state.headY - map->GetApple().Y);
+	state.distanceToApple = dx + dy;
+}
+
+bool Game::IsNearBody()
+{
+	return false;
+}
+
+double Game::calculateDistance(double x1, double y1, double x2, double y2)
+{
+	return std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
+}
+
+void Game::calculateDistances(State& state, double width, double height)
+{
+	// Distance to walls
+	state.distanceToWallUp = state.headY;
+	state.distanceToWallDown = height - state.headY;
+	state.distanceToWallLeft = state.headX;
+	state.distanceToWallRight = width - state.headX;
+
+	Snake* snake = map->GetSnake()[0];
+	if (snake->X < map->GetApple().X) {
+		state.foodDirection = Direction::RIGHT;
+	}
+	else if (snake->X > map->GetApple().X) {
+		state.foodDirection = Direction::LEFT;
+	}
+	else if (snake->Y < map->GetApple().Y) {
+		state.foodDirection = Direction::UP;
+	}
+	else if (snake->Y > map->GetApple().Y) {
+		state.foodDirection = Direction::DOWN;
+	}
+	// Distance to food
+	//state.distanceToApple = calculateDistance(state.headX, state.headY, map->GetApple().X, map->GetApple().Y);
+	double minDistance = std::numeric_limits<double>::max();
+
+	for (const auto& segment : map->GetSnake()) {
+		double segmentX = segment->X;
+		double segmentY = segment->Y;
+		double distance = calculateDistance(state.headX, state.headY, segmentX, segmentY);
+		if (distance < minDistance) {
+			minDistance = distance;
+		}
+	}
+	state.distanceToBody = minDistance;
 }

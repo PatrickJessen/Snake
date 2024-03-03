@@ -56,5 +56,8 @@
     <ClInclude Include="src\Snake\QLearningAgent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Snake\NeuralNetwork.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

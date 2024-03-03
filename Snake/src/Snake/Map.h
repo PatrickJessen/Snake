@@ -23,7 +23,7 @@ enum class MapType
 	SNAKE = 1,
 	APPLE = 2
 };
-static const int width = 20;
+static const int width = 10;
 static const int height = 10;
 
 class Map

@@ -2,6 +2,7 @@
 #include "Draw.h"
 #include "Game.h"
 #include "QLearningAgent.h"
+#include "NeuralNetwork.h"
 #include <thread>
 
 
@@ -11,7 +12,8 @@ int main()
 	Window* window = new Window("Snake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 750, false);
 	Draw* draw = new Draw(window);
 	Game* game = new Game(draw->GetMap(), 1);
-	QLearningAgent<Direction>* agent = new QLearningAgent<Direction>(width, 1.0, 1.0, 1.0);
+	QLearningAgent<Direction>* agent = new QLearningAgent<Direction>(width, 0.1, 0.9, 0.1);
+	//Agent agent2;
 	const int FPS = 10;
 	const int frameDelay = 1000 / FPS;
 
@@ -23,10 +25,17 @@ int main()
 	while (window->Running())
 	{
 		game->Reset();
-		int state = 0;
+		State state{};
 		generation++;
-		while (!game->IsOutOfBounds())
+		bool outOfBounds = false;
+		while (!outOfBounds)
 		{
+			if (Input::KeyPressed(Key::A)) {
+				agent->setLearningRate(0.9);
+			}
+			if (Input::KeyPressed(Key::S)) {
+				agent->setLearningRate(0.1);
+			}
 			if (Input::KeyPressed(Key::L)) {
 				show = !show;
 				std::cout << "Generation: " << generation << "\n";
@@ -44,18 +53,16 @@ int main()
 					SDL_Delay(frameDelay - frameTime);
 				}
 			}
-			Direction action = agent->chooseAction(state);
-			if (action == Direction::UP && game->GetDirection() != Direction::DOWN ||
-				action == Direction::DOWN && game->GetDirection() != Direction::UP ||
-				action == Direction::LEFT && game->GetDirection() != Direction::RIGHT ||
-				action == Direction::RIGHT && game->GetDirection() != Direction::LEFT)
-			{
+			State currentState = game->GetCurrentState();
+			Direction action = agent->chooseAction(currentState);
 
-				double reward = game->Movement(action);
-				int newState = draw->GetMap()->GetSnake()[0]->X * width + draw->GetMap()->GetSnake()[0]->Y;
-				agent->updateQValue(state, action, reward, newState);
-				state = newState;
+			double reward = game->Movement(action, currentState);
+			State newState = game->GetCurrentState();
+			if (reward == -10.0) {
+				outOfBounds = true;
 			}
+			agent->updateQValue(state, action, reward, newState);
+			state = newState;
 			if (draw->GetHighestScore() < draw->GetMap()->GetScore()) {
 				draw->SetHighScore(draw->GetMap()->GetScore());
 				std::cout << "Highscore reached: " << draw->GetHighestScore() << " generation: " << generation << "\n";
@@ -63,7 +70,6 @@ int main()
 			if (show) {
 				draw->Update();
 			}
-			game->MoveSnake();
 			window->Update();
 			window->Clear();
 		}
