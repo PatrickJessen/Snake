@@ -8,14 +8,16 @@ enum class Direction
 };
 
 struct State {
-	bool dangerUp;
-	bool dangerDown;
-	bool dangerLeft;
-	bool dangerRight;
-	bool dangerUp;
-	bool dangerUp;
-	bool dangerUp;
-	bool dangerUp;
+	int headX;
+	int headY;
+	Direction direction;
+	Direction foodDirection;
+	Direction nearestWall;
+	bool wallUp;
+	bool wallDown;
+	bool wallLeft;
+	bool wallRight;
+	bool bodyInfront;
 };
 
 class Game
@@ -26,26 +28,13 @@ public:
 
 public:
 	void Update();
-	double Movement(Direction action, State state);
+	double Movement(Direction action, State state, int& iterations);
 	bool HasBodyCollided();
 	bool IsOutOfBounds();
 	void Reset();
 	Direction GetDirection() { return dir; }
 	void MoveSnake();
 	State GetCurrentState();
-	double calculateReward(State newState, State oldState) {
-		double reward = 0.0;
-		// Calculate distance change to the apple
-		int oldDist = oldState.distanceToApple;
-		int newDist = newState.distanceToApple;
-		int distChange = oldDist - newDist;
-		// Positive reward for getting closer to the apple
-		reward += distChange * 10.0;
-		// Negative reward for moving away from the apple
-		reward -= (distChange < 0) ? 10.0 : -10.0;
-		// Additional rewards/punishments can be added based on other factors
-		return reward;
-	}
 
 private:
 	void SetDirection();

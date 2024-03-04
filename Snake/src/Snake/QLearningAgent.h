@@ -10,7 +10,7 @@ class QLearningAgent {
 public:
     QLearningAgent(int size, double learningRate, double discountFactor, double epsilon) :
         size(size), learningRate(learningRate), discountFactor(discountFactor), epsilon(epsilon), dist_action(0, 3) {
-        qTable.resize(size * size * 150, std::vector<double>(4, 0.0)); // Preallocate memory for Q-table
+        qTable.resize(size * size * 50, std::vector<double>(4, 0.0)); // Preallocate memory for Q-table
         rng.seed(std::random_device()()); // Seed random number generator
     }
 
@@ -61,15 +61,13 @@ public:
 
 private:
     int stateToIndex(State state) {
-        int index = state.headX * size + state.headY;
-        index = index + static_cast<int>(state.direction);
-        index = index + static_cast<int>(state.foodDirection);
-        //index = index + state.distanceToApple;
-        //index = index + state.distanceToBody;
-        //index = index + state.distanceToWallDown;
-        //index = index + state.distanceToWallLeft;
-        //index = index + state.distanceToWallRight;
-        //index = index + state.distanceToWallUp;
+        /*int index = state.headY * size + 4 + state.headX;
+        index = index * size + 4 + static_cast<int>(state.direction);*/
+        //index = index * size + 4 + state.distanceToApple;
+        int index = size + 4 + static_cast<int>(state.foodDirection);
+        //index = index * size + 4 + static_cast<int>(state.nearestWall);
+        index = index * size + (int)state.wallDown + (int)state.wallUp + (int)state.wallLeft + (int)state.wallRight;
+        index = index * size + 1 + (int)state.bodyInfront;
         if (index < 0) {
             return 0;
         }

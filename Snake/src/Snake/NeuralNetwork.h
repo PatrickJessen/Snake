@@ -192,12 +192,12 @@ private:
         std::vector<double> input;
 
         // Normalize coordinates and other relevant features if necessary
-        double normalized_snake_head_x = state.headX / (double)width;
-        double normalized_snake_head_y = state.headY / (double)height;
+       /* double normalized_snake_head_x = state.headX / (double)width;
+        double normalized_snake_head_y = state.headY / (double)height;*/
 
         // Add normalized coordinates and other features to input vector
-        input.push_back(normalized_snake_head_x);
-        input.push_back(normalized_snake_head_y);
+        /*input.push_back(normalized_snake_head_x);
+        input.push_back(normalized_snake_head_y);*/
 
         // Add additional features as needed
         // For example, you might include the direction of movement, presence of obstacles, etc.
