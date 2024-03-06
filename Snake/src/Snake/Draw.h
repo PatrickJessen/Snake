@@ -11,23 +11,21 @@ public:
 	~Draw();
 
 public:
-	void Update();
-	Map* GetMap() { return map; }
+	void Update(Map* map);
 	void SetHighScore(int score);
 	int GetHighestScore();
 
 private:
-	void DrawMap();
-	void DrawSnake();
-	void DrawApple();
+	void DrawMap(Map* map);
+	void DrawSnake(Map* map);
+	void DrawApple(Map* map);
 	void InitText();
-	void PrintScore();
+	void PrintScore(Map* map);
 	void PrintHightScore();
 	std::string GetHighScore();
 
 private:
 	Window* window;
-	Map* map;
 
 private:
 	TTF_Font* font;

@@ -4,7 +4,6 @@
 Draw::Draw(Window* window)
 {
 	this->window = window;
-	map = new Map();
 	InitText();
 	highScore = 0;
 }
@@ -14,16 +13,16 @@ Draw::~Draw()
 	
 }
 
-void Draw::Update()
+void Draw::Update(Map* map)
 {
-	DrawMap();
-	PrintScore();
+	DrawMap(map);
+	PrintScore(map);
 	PrintHightScore();
 	//DrawSnake();
 	//DrawApple();
 }
 
-void Draw::DrawMap()
+void Draw::DrawMap(Map* map)
 {
 	SDL_Rect rect;
 	for (int i = 0; i < width; i++)
@@ -32,7 +31,7 @@ void Draw::DrawMap()
 			if (map->field[i][y] == (int)MapType::SNAKE)
 			{
 				SDL_SetRenderDrawColor(window->GetRender(), 0, 255, 0, 255);
-				DrawSnake();
+				DrawSnake(map);
 			}
 			else if (map->field[i][y] == (int)MapType::APPLE)
 			{
@@ -50,16 +49,22 @@ void Draw::DrawMap()
 	SDL_RenderDrawRect(window->GetRender(), &rect);
 }
 
-void Draw::DrawSnake()
+void Draw::DrawSnake(Map* map)
 {
 	for (int x = 0; x < map->GetSnake().size(); x++)
 	{
+		if (x == 0) {
+			SDL_SetRenderDrawColor(window->GetRender(), 255, 255, 0, 255);
+		}
+		else {
+			SDL_SetRenderDrawColor(window->GetRender(), 0, 255, 0, 255);
+		}
 		SDL_Rect rect = { map->GetSnake()[x]->X * map->GetSize(), map->GetSnake()[x]->Y * map->GetSize(), map->GetSize(), map->GetSize() };
 		SDL_RenderFillRect(window->GetRender(), &rect);
 	}
 }
 
-void Draw::DrawApple()
+void Draw::DrawApple(Map* map)
 {
 	for (int i = 0; i < width; i++)
 		for (int y = 0; y < height; y++)
@@ -76,7 +81,7 @@ void Draw::InitText()
 	TTF_Init();
 }
 
-void Draw::PrintScore()
+void Draw::PrintScore(Map* map)
 {
 	SDL_DestroyTexture(tex);
 	SDL_FreeSurface(tempSurface);

@@ -7,23 +7,31 @@ enum class Direction
 	UP, DOWN, LEFT, RIGHT
 };
 
+enum class Danger
+{
+	NONE, LEFT, RIGHT, UP, DOWN
+};
+
 struct State {
-	int headX;
-	int headY;
 	Direction direction;
 	Direction foodDirection;
-	Direction nearestWall;
-	bool wallUp;
-	bool wallDown;
-	bool wallLeft;
-	bool wallRight;
-	bool bodyInfront;
+	Danger body;
+	Danger wall;
+	//bool bodyInfront;
+
+	bool operator==(const State& other) const {
+		return
+			foodDirection == other.foodDirection &&
+			body == other.body &&
+			wall == other.wall &&
+			direction == other.direction;
+	}
 };
 
 class Game
 {
 public:
-	Game(Map* map, int speed);
+	Game(int speed);
 	~Game();
 
 public:
@@ -35,6 +43,9 @@ public:
 	Direction GetDirection() { return dir; }
 	void MoveSnake();
 	State GetCurrentState();
+	Map* GetMap() { return map; }
+	bool GetOutOfBounds() { return outOfBounds; }
+	bool GetBodyCollided() { return bodyCollided; }
 
 private:
 	void SetDirection();
@@ -52,5 +63,7 @@ private:
 	Direction dir;
 	Map* map;
 	int speed;
+	bool outOfBounds = false;
+	bool bodyCollided = false;
 };
 

@@ -58,13 +58,18 @@ void Map::AddScore()
 	score += 10;
 }
 
+void Map::SetHighScore()
+{
+	highScore = score;
+}
+
 void Map::CreateSnake()
 {
 	for (int i = 0; i < snake.size(); i++)
 		delete snake[i];
 
 	snake.clear();
-	snake.push_back(new Snake(1, 1));
+	snake.push_back(new Snake(rand() % width, rand() % height));
 	field[snake[0]->X][snake[0]->Y] = (int)MapType::SNAKE;
 }
 

@@ -9,6 +9,10 @@ struct Snake
 
 	Snake(int x, int y)
 		: X(x), Y(y) {}
+
+	bool operator==(const Snake& other) const {
+		return X == other.X && Y == other.Y;
+	}
 };
 
 struct Apple
@@ -43,6 +47,8 @@ public:
 	int GetScore() { return score; }
 	void AddScore();
 	void ResetScore() { score = 0; }
+	void SetHighScore();
+	int GetHighScore() { return highScore; }
 
 private:
 	void CreateMap();
@@ -56,4 +62,5 @@ private:
 	std::vector<Snake*> snake;
 	Apple apple;
 	int score;
+	int highScore;
 };

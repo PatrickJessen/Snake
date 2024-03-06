@@ -5,21 +5,28 @@
 #include "NeuralNetwork.h"
 #include <thread>
 
-
+int generation = 0;
+int highestScore = 0;
+int CurrentHighScore(int score)
+{
+	if (score > highestScore) {
+		highestScore = score;
+	}
+	return highestScore;
+}
 
 int main()
 {
 	Window* window = new Window("Snake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 750, false);
+	Game* game = new Game(1);
 	Draw* draw = new Draw(window);
-	Game* game = new Game(draw->GetMap(), 1);
-	QLearningAgent<Direction>* agent = new QLearningAgent<Direction>(width, 0.1, 0.99, 0.0001);
-	//Agent agent2;
+	QLearningAgent<Direction>* agent = new QLearningAgent<Direction>(width, 0.1, 0.99, 0.001);
+
 	const int FPS = 10;
 	const int frameDelay = 1000 / FPS;
 
 	Uint32 frameStart;
 	int frameTime;
-	int generation = 0;
 	bool show = true;
 	bool slowDown = true;
 	while (window->Running())
@@ -31,6 +38,11 @@ int main()
 		int iterations = 0;
 		while (!outOfBounds)
 		{
+			if (Input::KeyPressed(Key::S)) {
+				agent->SaveTraining("test.txt");
+				agent->SaveStateIndexMap("test2.txt");
+				std::cout << "Saved\n";
+			}
 			if (Input::KeyPressed(Key::L)) {
 				show = !show;
 				std::cout << "Generation: " << generation << "\n";
@@ -53,17 +65,18 @@ int main()
 
 			double reward = game->Movement(action, currentState, iterations);
 			State newState = game->GetCurrentState();
-			if (reward == -10.0 || reward == -1.0) {
+			if (reward == -20.0 || reward == -1.0) {
 				outOfBounds = true;
 			}
 			agent->updateQValue(state, action, reward, newState);
 			state = newState;
-			if (draw->GetHighestScore() < draw->GetMap()->GetScore()) {
-				draw->SetHighScore(draw->GetMap()->GetScore());
-				std::cout << "Highscore reached: " << draw->GetHighestScore() << " generation: " << generation << "\n";
+			if (game->GetMap()->GetHighScore() < game->GetMap()->GetScore()) {
+				game->GetMap()->SetHighScore();
+				std::cout << "Highscore reached: " << game->GetMap()->GetHighScore() << " generation: " << generation << "\n";
 			}
 			if (show) {
-				draw->Update();
+				draw->SetHighScore(game->GetMap()->GetHighScore());
+				draw->Update(game->GetMap());
 			}
 			window->Update();
 			window->Clear();
