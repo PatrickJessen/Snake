@@ -55,7 +55,7 @@ void Map::CreateMap()
 
 void Map::AddScore()
 {
-	score += 10;
+	score++;
 }
 
 void Map::SetHighScore()

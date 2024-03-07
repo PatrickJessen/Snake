@@ -70,16 +70,16 @@ double Game::Movement(Direction action, State state, int& iterations)
 	}
 	else if (EatApple()) {
 		iterations = 0;
-		return 10.0;
+		return 100.0 + map->GetScore();
 	}
 	else if (HasBodyCollided()) {
 		bodyCollided = true;
 		return -20.0;
 	}
-	if (iterations > width * height) {
+	if (iterations > 200) {
 		return -5.0;
 	}
-	return -0.1;
+	return 0.0;
 }
 
 void Game::MoveSnake()
@@ -228,14 +228,10 @@ void Game::calculateDistances(State& state, double width, double height)
 	Snake* snake = map->GetSnake()[0];
 	state.direction = dir;
 	state.wall = Danger::NONE;
-	state.body = Danger::NONE;
-	//state.size = 0;
-	//if (map->GetSnake().size() >= height - 1) {
-	//	state.size++;
-	//}
-	/*for (int i = height - 1; i < map->GetSnake().size(); i++) {
-		state.size++;
-	}*/
+	state.bodyUp = Danger::NONE;
+	state.bodyDown = Danger::NONE;
+	state.bodyLeft = Danger::NONE;
+	state.bodyRight = Danger::NONE;
 
 	if (snake->Y -1 < 0) {
 		//state.nearestWall = Direction::UP;
@@ -252,19 +248,6 @@ void Game::calculateDistances(State& state, double width, double height)
 	else if (snake->X +1 > width -1) {
 		//state.nearestWall = Direction::RIGHT;
 		state.wall = Danger::RIGHT;
-	}
-
-	if (snake->Y - 1 < 0 && snake->X - 1 < 0) {
-		state.wall = Danger::UPLEFT;
-	}
-	else if (snake->Y - 1 < 0 && snake->X + 1 > width - 1) {
-		state.wall = Danger::UPRIGHT;
-	}
-	else if (snake->Y + 1 > height -1 && snake->X + 1 > width - 1) {
-		state.wall = Danger::DOWNRIGHT;
-	}
-	else if (snake->Y + 1 < height -1 && snake->X - 1 < 0) {
-		state.wall = Danger::DOWNLEFT;
 	}
 
 	if (snake->X < map->GetApple().X) {
@@ -284,29 +267,17 @@ void Game::calculateDistances(State& state, double width, double height)
 		for (int i = 1; i < map->GetSnake().size(); i++) {
 			Snake* tail = map->GetSnake()[i];
 			if (snake->X - 1 == tail->X && snake->Y == tail->Y) {
-				state.body = Danger::LEFT;
+				state.bodyLeft = Danger::LEFT;
 			}
-			else if (snake->X + 1 == tail->X && snake->Y == tail->Y) {
-				state.body = Danger::RIGHT;
+			if (snake->X + 1 == tail->X && snake->Y == tail->Y) {
+				state.bodyRight = Danger::RIGHT;
 			}
-			else if (snake->X == tail->X && snake->Y -1 == tail->Y) {
-				state.body = Danger::UP;
+			if (snake->X == tail->X && snake->Y - 1 == tail->Y) {
+				state.bodyUp = Danger::UP;
 			}
-			else if (snake->X == tail->X && snake->Y + 1 == tail->Y) {
-				state.body = Danger::DOWN;
+			if (snake->X == tail->X && snake->Y + 1 == tail->Y) {
+				state.bodyDown = Danger::DOWN;
 			}
-			/*if (snake->X > tail->X && snake->Y == tail->Y) {
-				state.body = Danger::LEFT;
-			}
-			else if (snake->X < tail->X && snake->Y == tail->Y) {
-				state.body = Danger::RIGHT;
-			}
-			else if (snake->X == tail->X && snake->Y < tail->Y) {
-				state.body = Danger::DOWN;
-			}
-			else if (snake->X == tail->X && snake->Y > tail->Y) {
-				state.body = Danger::UP;
-			}*/
 		}
 	}
 }

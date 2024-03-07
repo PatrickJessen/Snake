@@ -9,22 +9,48 @@ enum class Direction
 
 enum class Danger
 {
-	NONE, LEFT, RIGHT, UP, DOWN, DOWNLEFT, DOWNRIGHT, UPRIGHT, UPLEFT
+	NONE, LEFT, RIGHT, UP, DOWN
 };
 
 struct State {
 	Direction direction;
 	Direction foodDirection;
-	Danger body;
+	Danger bodyUp;
+	Danger bodyDown;
+	Danger bodyLeft;
+	Danger bodyRight;
 	Danger wall;
 	bool operator==(const State& other) const {
 		return
 			foodDirection == other.foodDirection &&
-			body == other.body &&
+			bodyUp == other.bodyUp &&
+			bodyDown == other.bodyDown &&
+			bodyLeft == other.bodyLeft &&
+			bodyRight == other.bodyRight &&
 			wall == other.wall &&
 			direction == other.direction;
 	}
 };
+
+//struct State {
+//	Direction direction;
+//	Direction foodDirection;
+//	Danger bodyUp;
+//	Danger bodyDown;
+//	Danger bodyLeft;
+//	Danger bodyRight;
+//	Danger wall;
+//	bool operator==(const State& other) const {
+//		return
+//			foodDirection == other.foodDirection &&
+//			bodyUp == other.bodyUp &&
+//			bodyDown == other.bodyDown &&
+//			bodyLeft == other.bodyLeft &&
+//			bodyRight == other.bodyRight &&
+//			wall == other.wall &&
+//			direction == other.direction;
+//	}
+//};
 
 class Game
 {

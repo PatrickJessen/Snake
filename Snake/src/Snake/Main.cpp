@@ -15,12 +15,16 @@ int CurrentHighScore(int score)
 	return highestScore;
 }
 
-int main()
+double discountFactor = 1.0;
+double epsilon = 0.0;
+double learningFactor = 0.001;
+
+void RunWithGui()
 {
 	Window* window = new Window("Snake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 750, false);
-	Game* game = new Game(1);
 	Draw* draw = new Draw(window);
-	QLearningAgent<Direction>* agent = new QLearningAgent<Direction>(width, 0.1, 0.99, 0.001);
+	Game* game = new Game(1);
+	QLearningAgent<Direction>* agent = new QLearningAgent<Direction>(width, learningFactor, discountFactor, epsilon);
 
 	const int FPS = 10;
 	const int frameDelay = 1000 / FPS;
@@ -29,7 +33,7 @@ int main()
 	int frameTime;
 	bool show = true;
 	bool slowDown = true;
-	while (window->Running())
+	while (true)
 	{
 		game->Reset();
 		State state{};
@@ -83,8 +87,51 @@ int main()
 			iterations++;
 		}
 	}
+}
+void RunWithoutGui()
+{
+	Game* game = new Game(1);
+	QLearningAgent<Direction>* agent = new QLearningAgent<Direction>(width, learningFactor, discountFactor, epsilon);
+	while (true)
+	{
+		game->Reset();
+		State state{};
+		generation++;
+		bool outOfBounds = false;
+		int iterations = 0;
+		while (!outOfBounds)
+		{
+			State currentState = game->GetCurrentState();
+			Direction action = agent->chooseAction(currentState);
 
-	window->Clean();
+			double reward = game->Movement(action, currentState, iterations);
+			State newState = game->GetCurrentState();
+			if (reward == -20.0 || reward == -5.0) {
+				outOfBounds = true;
+			}
+			agent->updateQValue(state, action, reward, newState);
+			state = newState;
+			if (game->GetMap()->GetHighScore() < game->GetMap()->GetScore()) {
+				game->GetMap()->SetHighScore();
+				std::cout << "Highscore reached: " << game->GetMap()->GetHighScore() << " generation: " << generation << "\n";
+				if (game->GetMap()->GetHighScore() > 40) {
+					agent->SaveTraining("test.txt");
+					agent->SaveStateIndexMap("test2.txt");
+					std::cout << "Saved\n";
+				}
+			}
+			iterations++;
+		}
+	}
+}
+int main()
+{
+	bool useGui = true;
+	if (useGui) {
+		RunWithGui();
+		return 0;
+	}
+	RunWithoutGui();
 
 	return 0;
 }

@@ -15,7 +15,10 @@ struct StateHash {
         std::size_t hash = 0;
         hash_combine(hash, std::hash<int>{}(static_cast<int>(state.direction)));
         hash_combine(hash, std::hash<int>{}(static_cast<int>(state.foodDirection)));
-        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.body)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyUp)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyDown)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyLeft)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyRight)));
         hash_combine(hash, std::hash<int>{}(static_cast<int>(state.wall)));
 
         //hash_combine(hash, std::hash<int>{}(static_cast<int>(state.foodDirection)));
@@ -60,6 +63,9 @@ public:
     void updateQValue(State state, T action, double reward, State newState) {
         if (epsilon > minEpsilon) {
             epsilon -= epsilonDecay;
+        }
+        if (epsilon < 0) {
+            epsilon = 0.0;
         }
         int stateIndex = stateToIndex(state);
         int newStateIndex = stateToIndex(newState);
@@ -127,7 +133,8 @@ public:
         std::ofstream file(filename);
         if (file.is_open()) {
             for (const auto& entry : stateIndexMap) {
-                file << (int)entry.first.body << " " << (int)entry.first.direction << " " << (int)entry.first.wall << " " << (int)entry.first.foodDirection << " " << entry.second << std::endl;
+                file << (int)entry.first.bodyUp << " " << (int)entry.first.bodyDown << " " << (int)entry.first.bodyLeft << " " << (int)entry.first.bodyRight << " " <<
+                    (int)entry.first.direction << " " << (int)entry.first.wall << " " << (int)entry.first.foodDirection << " " << entry.second << std::endl;
             }
         }
         file.close();
@@ -145,9 +152,12 @@ public:
                 int dir;
                 int fooddir;
                 int wall;
-                int body;
-                if (iss >> body >> dir >> wall >> fooddir >> value) {
-                    state.body = (Danger)body;
+                int bodyUp, bodyDown, bodyLeft, bodyRight;
+                if (iss >> bodyUp >> bodyDown >> bodyLeft >> bodyRight >> dir >> wall >> fooddir >> value) {
+                    state.bodyUp = (Danger)bodyUp;
+                    state.bodyDown = (Danger)bodyDown;
+                    state.bodyLeft = (Danger)bodyLeft;
+                    state.bodyRight = (Danger)bodyRight;
                     state.wall = (Danger)wall;
                     state.direction = (Direction)dir;
                     state.foodDirection = (Direction)fooddir;
@@ -185,6 +195,6 @@ private:
     std::uniform_real_distribution<double> dist{ 0.0, 1.0 };
     std::uniform_int_distribution<int> dist_action; // Distribution for choosing action
     std::unordered_map<State, int, StateHash> stateIndexMap;
-    double minEpsilon = 0.1;
+    double minEpsilon = 0.0;
     double epsilonDecay = 0.000001;
 };
