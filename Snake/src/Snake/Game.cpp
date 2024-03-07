@@ -76,10 +76,10 @@ double Game::Movement(Direction action, State state, int& iterations)
 		bodyCollided = true;
 		return -20.0;
 	}
-	if (iterations > 350) {
-		return -1.0;
+	if (iterations > width * height) {
+		return -5.0;
 	}
-	return 0.0;
+	return -0.1;
 }
 
 void Game::MoveSnake()
@@ -229,11 +229,19 @@ void Game::calculateDistances(State& state, double width, double height)
 	state.direction = dir;
 	state.wall = Danger::NONE;
 	state.body = Danger::NONE;
+	//state.size = 0;
+	//if (map->GetSnake().size() >= height - 1) {
+	//	state.size++;
+	//}
+	/*for (int i = height - 1; i < map->GetSnake().size(); i++) {
+		state.size++;
+	}*/
+
 	if (snake->Y -1 < 0) {
 		//state.nearestWall = Direction::UP;
 		state.wall = Danger::UP;
 	}
-	else if (snake->Y +1 > height) {
+	else if (snake->Y +1 > height -1) {
 		//state.nearestWall = Direction::DOWN;
 		state.wall = Danger::DOWN;
 	}
@@ -241,9 +249,22 @@ void Game::calculateDistances(State& state, double width, double height)
 		//state.nearestWall = Direction::LEFT;
 		state.wall = Danger::LEFT;
 	}
-	else if (snake->X +1 > width) {
+	else if (snake->X +1 > width -1) {
 		//state.nearestWall = Direction::RIGHT;
 		state.wall = Danger::RIGHT;
+	}
+
+	if (snake->Y - 1 < 0 && snake->X - 1 < 0) {
+		state.wall = Danger::UPLEFT;
+	}
+	else if (snake->Y - 1 < 0 && snake->X + 1 > width - 1) {
+		state.wall = Danger::UPRIGHT;
+	}
+	else if (snake->Y + 1 > height -1 && snake->X + 1 > width - 1) {
+		state.wall = Danger::DOWNRIGHT;
+	}
+	else if (snake->Y + 1 < height -1 && snake->X - 1 < 0) {
+		state.wall = Danger::DOWNLEFT;
 	}
 
 	if (snake->X < map->GetApple().X) {
@@ -253,13 +274,13 @@ void Game::calculateDistances(State& state, double width, double height)
 		state.foodDirection = Direction::LEFT;
 	}
 	else if (snake->Y < map->GetApple().Y) {
-		state.foodDirection = Direction::UP;
-	}
-	else if (snake->Y > map->GetApple().Y) {
 		state.foodDirection = Direction::DOWN;
 	}
+	else if (snake->Y > map->GetApple().Y) {
+		state.foodDirection = Direction::UP;
+	}
 
-	if (map->GetSnake().size() > 1) {
+	if (map->GetSnake().size() > 2) {
 		for (int i = 1; i < map->GetSnake().size(); i++) {
 			Snake* tail = map->GetSnake()[i];
 			if (snake->X - 1 == tail->X && snake->Y == tail->Y) {
@@ -274,6 +295,18 @@ void Game::calculateDistances(State& state, double width, double height)
 			else if (snake->X == tail->X && snake->Y + 1 == tail->Y) {
 				state.body = Danger::DOWN;
 			}
+			/*if (snake->X > tail->X && snake->Y == tail->Y) {
+				state.body = Danger::LEFT;
+			}
+			else if (snake->X < tail->X && snake->Y == tail->Y) {
+				state.body = Danger::RIGHT;
+			}
+			else if (snake->X == tail->X && snake->Y < tail->Y) {
+				state.body = Danger::DOWN;
+			}
+			else if (snake->X == tail->X && snake->Y > tail->Y) {
+				state.body = Danger::UP;
+			}*/
 		}
 	}
 }

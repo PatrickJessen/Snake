@@ -9,7 +9,7 @@ enum class Direction
 
 enum class Danger
 {
-	NONE, LEFT, RIGHT, UP, DOWN
+	NONE, LEFT, RIGHT, UP, DOWN, DOWNLEFT, DOWNRIGHT, UPRIGHT, UPLEFT
 };
 
 struct State {
@@ -17,8 +17,6 @@ struct State {
 	Direction foodDirection;
 	Danger body;
 	Danger wall;
-	//bool bodyInfront;
-
 	bool operator==(const State& other) const {
 		return
 			foodDirection == other.foodDirection &&

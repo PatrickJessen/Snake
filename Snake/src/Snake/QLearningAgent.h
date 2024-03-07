@@ -17,6 +17,7 @@ struct StateHash {
         hash_combine(hash, std::hash<int>{}(static_cast<int>(state.foodDirection)));
         hash_combine(hash, std::hash<int>{}(static_cast<int>(state.body)));
         hash_combine(hash, std::hash<int>{}(static_cast<int>(state.wall)));
+
         //hash_combine(hash, std::hash<int>{}(static_cast<int>(state.foodDirection)));
         //hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyInfront)));
         return hash;

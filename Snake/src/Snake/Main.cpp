@@ -65,7 +65,7 @@ int main()
 
 			double reward = game->Movement(action, currentState, iterations);
 			State newState = game->GetCurrentState();
-			if (reward == -20.0 || reward == -1.0) {
+			if (reward == -20.0 || reward == -5.0) {
 				outOfBounds = true;
 			}
 			agent->updateQValue(state, action, reward, newState);
