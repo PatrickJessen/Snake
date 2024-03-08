@@ -15,10 +15,14 @@ struct StateHash {
         std::size_t hash = 0;
         hash_combine(hash, std::hash<int>{}(static_cast<int>(state.direction)));
         hash_combine(hash, std::hash<int>{}(static_cast<int>(state.foodDirection)));
-        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyUp)));
-        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyDown)));
-        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyLeft)));
-        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyRight)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyUp.danger)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyUp.distance)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyDown.danger)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyDown.distance)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyLeft.danger)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyLeft.distance)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyRight.danger)));
+        hash_combine(hash, std::hash<int>{}(static_cast<int>(state.bodyRight.distance)));
         hash_combine(hash, std::hash<int>{}(static_cast<int>(state.wall)));
 
         //hash_combine(hash, std::hash<int>{}(static_cast<int>(state.foodDirection)));
@@ -133,8 +137,15 @@ public:
         std::ofstream file(filename);
         if (file.is_open()) {
             for (const auto& entry : stateIndexMap) {
-                file << (int)entry.first.bodyUp << " " << (int)entry.first.bodyDown << " " << (int)entry.first.bodyLeft << " " << (int)entry.first.bodyRight << " " <<
-                    (int)entry.first.direction << " " << (int)entry.first.wall << " " << (int)entry.first.foodDirection << " " << entry.second << std::endl;
+                file << (int)entry.first.bodyUp.danger << " "
+                    << entry.first.bodyUp.distance << " " 
+                    << (int)entry.first.bodyDown.danger << " "
+                    << entry.first.bodyDown.distance << " " 
+                    << (int)entry.first.bodyLeft.danger << " "
+                    << entry.first.bodyLeft.distance << " "
+                    << (int)entry.first.bodyRight.danger << " "
+                    << entry.first.bodyRight.distance << " "
+                    << (int)entry.first.direction << " " << (int)entry.first.wall << " " << (int)entry.first.foodDirection << " " << entry.second << std::endl;
             }
         }
         file.close();
@@ -153,11 +164,16 @@ public:
                 int fooddir;
                 int wall;
                 int bodyUp, bodyDown, bodyLeft, bodyRight;
-                if (iss >> bodyUp >> bodyDown >> bodyLeft >> bodyRight >> dir >> wall >> fooddir >> value) {
-                    state.bodyUp = (Danger)bodyUp;
-                    state.bodyDown = (Danger)bodyDown;
-                    state.bodyLeft = (Danger)bodyLeft;
-                    state.bodyRight = (Danger)bodyRight;
+                int bodyUpD, bodyDownD, bodyLeftD, bodyRightD;
+                if (iss >> bodyUp >> bodyUpD >> bodyDown >> bodyDownD >> bodyLeft >> bodyLeftD >> bodyRight >> bodyRightD >> dir >> wall >> fooddir >> value) {
+                    state.bodyUp.danger = (Danger)bodyUp;
+                    state.bodyUp.distance = bodyUpD;
+                    state.bodyDown.danger = (Danger)bodyDown;
+                    state.bodyDown.distance = bodyDownD;
+                    state.bodyLeft.danger = (Danger)bodyLeft;
+                    state.bodyLeft.distance = bodyLeftD;
+                    state.bodyRight.danger = (Danger)bodyRight;
+                    state.bodyRight.distance = bodyRightD;
                     state.wall = (Danger)wall;
                     state.direction = (Direction)dir;
                     state.foodDirection = (Direction)fooddir;

@@ -11,14 +11,25 @@ enum class Danger
 {
 	NONE, LEFT, RIGHT, UP, DOWN
 };
+struct DangerModel
+{
+	Danger danger = Danger::NONE;
+	int distance;
+
+	bool operator==(const DangerModel& other) const
+	{
+		return danger == other.danger &&
+			distance == other.distance;
+	}
+};
 
 struct State {
 	Direction direction;
 	Direction foodDirection;
-	Danger bodyUp;
-	Danger bodyDown;
-	Danger bodyLeft;
-	Danger bodyRight;
+	DangerModel bodyUp;
+	DangerModel bodyDown;
+	DangerModel bodyLeft;
+	DangerModel bodyRight;
 	Danger wall;
 	bool operator==(const State& other) const {
 		return

@@ -76,8 +76,8 @@ double Game::Movement(Direction action, State state, int& iterations)
 		bodyCollided = true;
 		return -20.0;
 	}
-	if (iterations > 200) {
-		return -5.0;
+	if (iterations > 150) {
+		return -15.0;
 	}
 	return 0.0;
 }
@@ -228,10 +228,10 @@ void Game::calculateDistances(State& state, double width, double height)
 	Snake* snake = map->GetSnake()[0];
 	state.direction = dir;
 	state.wall = Danger::NONE;
-	state.bodyUp = Danger::NONE;
-	state.bodyDown = Danger::NONE;
-	state.bodyLeft = Danger::NONE;
-	state.bodyRight = Danger::NONE;
+	state.bodyUp = DangerModel();
+	state.bodyDown = DangerModel();
+	state.bodyLeft = DangerModel();
+	state.bodyRight = DangerModel();
 
 	if (snake->Y -1 < 0) {
 		//state.nearestWall = Direction::UP;
@@ -264,19 +264,25 @@ void Game::calculateDistances(State& state, double width, double height)
 	}
 
 	if (map->GetSnake().size() > 2) {
-		for (int i = 1; i < map->GetSnake().size(); i++) {
-			Snake* tail = map->GetSnake()[i];
-			if (snake->X - 1 == tail->X && snake->Y == tail->Y) {
-				state.bodyLeft = Danger::LEFT;
-			}
-			if (snake->X + 1 == tail->X && snake->Y == tail->Y) {
-				state.bodyRight = Danger::RIGHT;
-			}
-			if (snake->X == tail->X && snake->Y - 1 == tail->Y) {
-				state.bodyUp = Danger::UP;
-			}
-			if (snake->X == tail->X && snake->Y + 1 == tail->Y) {
-				state.bodyDown = Danger::DOWN;
+		for (int j = 0; j < 4; j++) {
+			for (int i = 1; i < map->GetSnake().size(); i++) {
+				Snake* tail = map->GetSnake()[i];
+				if (snake->X - j == tail->X && snake->Y == tail->Y) {
+					state.bodyLeft.danger = Danger::LEFT;
+					state.bodyLeft.distance = j;
+				}
+				if (snake->X + j == tail->X && snake->Y == tail->Y) {
+					state.bodyRight.danger = Danger::RIGHT;
+					state.bodyRight.distance = j;
+				}
+				if (snake->X == tail->X && snake->Y - j == tail->Y) {
+					state.bodyUp.danger = Danger::UP;
+					state.bodyUp.distance = j;
+				}
+				if (snake->X == tail->X && snake->Y + j == tail->Y) {
+					state.bodyDown.danger = Danger::DOWN;
+					state.bodyDown.distance = j;
+				}
 			}
 		}
 	}

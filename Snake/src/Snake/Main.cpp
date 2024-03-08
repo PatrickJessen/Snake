@@ -16,7 +16,7 @@ int CurrentHighScore(int score)
 }
 
 double discountFactor = 1.0;
-double epsilon = 0.0;
+double epsilon = 0.9;
 double learningFactor = 0.001;
 
 void RunWithGui()
@@ -111,6 +111,11 @@ void RunWithoutGui()
 			}
 			agent->updateQValue(state, action, reward, newState);
 			state = newState;
+			if (generation == 20000) {
+				agent->SaveTraining("test.txt");
+				agent->SaveStateIndexMap("test2.txt");
+				std::cout << "Saved\n";
+			}
 			if (game->GetMap()->GetHighScore() < game->GetMap()->GetScore()) {
 				game->GetMap()->SetHighScore();
 				std::cout << "Highscore reached: " << game->GetMap()->GetHighScore() << " generation: " << generation << "\n";
@@ -126,7 +131,7 @@ void RunWithoutGui()
 }
 int main()
 {
-	bool useGui = true;
+	bool useGui = false;
 	if (useGui) {
 		RunWithGui();
 		return 0;
